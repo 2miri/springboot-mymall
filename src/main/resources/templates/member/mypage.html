@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<ul th:object="${member}">
+    <li th:text="*{email}"></li>
+    <li th:text="*{emailVerified}"></li>
+    <li th:text="*{joinedAt}"></li>
+    <li th:text="*{id}"></li>
+</ul>
+
+<ul>
+    <li th:text="${member.email}"></li>
+    <li th:text="${member.emailVerified}"></li>
+    <li th:text="${member.joinedAt}"></li>
+    <li th:text="${member.id}"></li>
+</ul>
+</body>
+</html>

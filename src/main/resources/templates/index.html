@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymleaf/layout"
+      layout:decorate="~{layout/main-layout}" th:with="activeTab='items', title='My Mall'">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div layout:fragment="content">
+    <h1 th:text="${msg}">이곳은 메인페이지</h1>
+
+    <!-- 로그인 안했을 때 -->
+    <div sec:authorize="!isAuthenticated()">
+        환영합니다. <span th:text="${#authentication?.name}"></span>님,
+        로그인을 해주세요.
+    </div>
+
+    <!-- 로그인 했을 때 -->
+    <div sec:authorize="isAuthenticated()">
+        환영합니다. <span th:text="${#authentication?.name}"></span>님
+
+        <form th:action="@{/logout}" method="post">
+            <button>로그아웃</button>
+        </form>
+    </div>
+    </div>
+</body>
+</html>
