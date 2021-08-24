@@ -1,10 +1,15 @@
 package com.megait.mymall.service;
 
+import com.megait.mymall.domain.Address;
 import com.megait.mymall.domain.Member;
 import com.megait.mymall.domain.MemberType;
 import com.megait.mymall.repository.MemberRepository;
 import com.megait.mymall.util.MemberUser;
+import com.megait.mymall.validation.JoinFormVo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -80,4 +85,61 @@ public UserDetails loadUserByUsername(String username) throws UsernameNotFoundEx
 
     return new MemberUser(member);
 }
+
+    /**
+     * 1. JoinFormVo 객체를 Member DB에 저장
+     * 2. 이메일 보내기
+     * 3. 로그인 처리해주기
+     *
+     * @param vo
+     */
+    public void processNewMember(JoinFormVo vo) {
+        Member member = saveNewMember(vo);
+        sendEmail(member);
+        login(member);
+
+    }
+    private Member saveNewMember(JoinFormVo vo) {
+        Member member = Member.builder()
+                .email(vo.getEmail())
+                .password(passwordEncoder.encode(vo.getPassword()))
+                .joinedAt(LocalDateTime.now())
+                .memberType(MemberType.ROLE_USER)
+                .address(Address.builder()
+                        .postcode(vo.getPostcode())
+                        .baseAddress(vo.getBaseAddress())
+                        .detailAddress(vo.getDetailAddress())
+                        .build()
+                )
+                .build();
+        return  memberRepository.save(member);
+        // member를 영속성상태로 만듬
+    }
+
+    private void sendEmail(Member member) {
+
+    }
+
+    /**
+     * 강제 로그인 시키기
+     * @param member
+     */
+    private void login(Member member) {
+        MemberUser user = new MemberUser(member);
+
+        // 유저 정보를 담은 인증 토큰 생성
+       UsernamePasswordAuthenticationToken token =
+                new UsernamePasswordAuthenticationToken(
+                        user,
+                        user.getMember().getPassword(),
+                        user.getAuthorities()
+                        );
+
+        // 인증 토큰을 SecurityContext에 저장한다. <- 로그인 되었다!
+        // 교재 41번 참조 (메모에 있는 링크도 참조 ㄱㄱ)
+        SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(token);
+
+    }
+
 }

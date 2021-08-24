@@ -2,18 +2,38 @@ package com.megait.mymall.controller;
 
 import com.megait.mymall.domain.Member;
 import com.megait.mymall.repository.MemberRepository;
+import com.megait.mymall.service.MemberService;
 import com.megait.mymall.util.CurrentMember;
+import com.megait.mymall.validation.JoinFormValidator;
+import com.megait.mymall.validation.JoinFormVo;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.validation.Valid;
 import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
 public class MainController {
+
+    private final MemberService memberService;
+    private final MemberRepository memberRepository;
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
+
+    @InitBinder("joinFormVo") // MVC 요청 전에 추가할 설정들 (Controller에서만 사용)
+    protected void initBinder(WebDataBinder dataBinder){
+        dataBinder.addValidators(new JoinFormValidator(memberRepository));
+    }
 
     @RequestMapping("/")
     public String index(Principal principal, Model model){
@@ -29,7 +49,7 @@ public class MainController {
     public String login(){
         return "member/login";
     }
-    private final MemberRepository memberRepository;
+
 
     /*@GetMapping("/mypage")
     public String mypage(Model model, Principal principal) {
@@ -63,4 +83,26 @@ public class MainController {
         }
         return "member/mypage";
     }
+
+    @GetMapping("/signup")
+    public String signupForm(Model model) {
+        model.addAttribute("joinFormVo", new JoinFormVo());
+        return "member/signup";
+        // vo를 보내서 signup홈페이지에서 vo에 내용을 담아가지고 포스트로 보내는거임
+    }
+
+    @PostMapping("/signup")
+    public String signupSubmit(@Valid JoinFormVo JoinFormVo, Errors errors){
+        if(errors.hasErrors()){
+            log.info("회원가입 에러 : {}", errors.getAllErrors());
+            return "member/signup";
+        }
+
+        log.info("회원가입 정상!");
+        memberService.processNewMember(JoinFormVo);
+        //멤버 서비스에서 메서드 만들기
+
+        return "redirect:/"; // "/"로 리다이렉트
+    }
+
 }
