@@ -31,7 +31,7 @@
                 </form>
             </li>
 
-            <li class="nav-item" th:classappend="${activeTab == 'mypage'} ? active"
+            <li th:if="${member != null}" class="nav-item" th:classappend="${activeTab == 'mypage'} ? active"
                 sec:authorize="isAuthenticated()">
                 <a class="nav-link" th:href="@{'/mypage/' + ${member.email}}" th:text="${member.email}">내 정보</a>
             </li>

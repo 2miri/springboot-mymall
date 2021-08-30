@@ -5,6 +5,7 @@ import com.megait.mymall.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -44,13 +45,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 */
         http
                 .authorizeRequests()
-                        .mvcMatchers("/")
+                        .mvcMatchers("/","email-check")
                         .permitAll()
 
                         .antMatchers("/mypage/**")
                         .authenticated()
                 // mvcMatchers() : MVC 컨트롤러가 사용하는 요청 URL 패턴.
                 // antMatchers() : "**"을 사용할 수 있는 URL 패턴.
+
+                .mvcMatchers(HttpMethod.GET, "email-check")
+                .permitAll()
+                // get방식으로 email-check가 들어오는 것만 퍼밋올 해주겠다!!! 포스트는 안됑!!
 
                 .and()
                         .formLogin()  // 로그인 form 사용 및 설정

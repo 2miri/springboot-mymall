@@ -10,12 +10,14 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -103,4 +105,26 @@ public class MainController {
         return "redirect:/"; // "/" 로 리다이렉트
     }
 
+    @Transactional
+    @GetMapping("/email-check")
+    public String emailCheck(String email, String token, Model model){
+
+        Optional<Member> optional = memberRepository.findByEmail(email);
+        boolean result;
+
+        if(optional.isEmpty()){
+            result = false;
+        }
+        else if( ! optional.get().getEmailCheckToken().equals(token)){
+            result = false;
+        }
+        else {
+            result = true;
+            optional.get().setEmailVerified(true);
+        }
+
+        model.addAttribute("result", result);
+        model.addAttribute("email", email);
+        return "member/email-check-result";
+    }
 }

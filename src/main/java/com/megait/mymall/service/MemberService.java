@@ -26,7 +26,7 @@ public class MemberService implements UserDetailsService {
 
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
-
+    private final EmailService emailService;
     // 기본 관리자 계정 생성
     @PostConstruct  // MemberService 객체 생성 시 무조건 실행할 메서드
     public void createAdminMember() {
@@ -94,7 +94,7 @@ public class MemberService implements UserDetailsService {
      */
     public void processNewMember(JoinFormVo vo) {
         Member member = saveNewMember(vo);
-        sendEmail(member);
+        emailService.sendEmail(member);
         login(member);
     }
 
@@ -110,10 +110,6 @@ public class MemberService implements UserDetailsService {
                                 .detailAddress(vo.getDetailAddress()).build())
                 .build();
         return memberRepository.save(member);
-    }
-
-    // TODO
-    private void sendEmail(Member member) {
     }
 
 
