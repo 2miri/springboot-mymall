@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ##smtp
-**/src/main/resources/application-smtp.properties
+/src/main/resources/application-smtp.properties
