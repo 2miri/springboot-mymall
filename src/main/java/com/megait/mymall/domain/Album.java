@@ -16,6 +16,6 @@ import javax.persistence.Entity;
 @AllArgsConstructor
 @SuperBuilder
 public class Album extends Item{
-    @Column(nullable = false)
+//    @Column(nullable = false)
     String artist;
 }
