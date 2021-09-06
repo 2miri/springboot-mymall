@@ -1,7 +1,14 @@
 package com.megait.mymall.controller;
 
+import com.megait.mymall.domain.Album;
+import com.megait.mymall.domain.Book;
+import com.megait.mymall.domain.Item;
 import com.megait.mymall.domain.Member;
+import com.megait.mymall.repository.AlbumRepository;
+import com.megait.mymall.repository.BookRepository;
+import com.megait.mymall.repository.ItemRepository;
 import com.megait.mymall.repository.MemberRepository;
+import com.megait.mymall.service.ItemService;
 import com.megait.mymall.service.MemberService;
 import com.megait.mymall.util.CurrentMember;
 import com.megait.mymall.validation.JoinFormValidator;
@@ -17,6 +24,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -27,6 +35,7 @@ public class MainController {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final MemberService memberService;
     private final MemberRepository memberRepository;
+    private final ItemService itemService;
 
 
     @InitBinder("joinFormVo") // 요청 전에 추가할 설정들 (Controller 에서 사용)
@@ -43,7 +52,20 @@ public class MainController {
         }
         model.addAttribute("member", member);
         model.addAttribute("msg", message);
+
+        // 앨범, 도서 상품 목록을 attribute로 추가
+        // 이름 : bookList, albumList
+        List<Book> bookList = itemService.getBookList();
+        List<Album> albumList = itemService.getAlbumList();
+
+        model.addAttribute("bookList", bookList);
+        model.addAttribute("albumList", albumList);
+        //컨트롤러에서 레파지토리를 바로 불러오는건 너무 원초적이고.. 서비스를 하나 끼는게 좋음
+        // 아이템서비스 autowire
+
         return "index";
+        // index.html 에서 thymeleaf 사용해서 상품의 이름, 이미지, 가격을 모두 출력
+
     }
 
     @GetMapping("/login")

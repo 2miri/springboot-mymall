@@ -9,7 +9,7 @@
     <title>Title</title>
 </head>
 <body>
-    <div layout:fragment="content">
+<div layout:fragment="content">
     <h1 th:text="${msg}">이곳은 메인페이지</h1>
 
     <!-- 로그인 안했을 때 -->
@@ -26,6 +26,25 @@
             <button>로그아웃</button>
         </form>
     </div>
+
+    <div th:if="${albumList != null}">
+        <table>
+            <tr>
+                <th>음반명</th>
+                <th>이미지</th>
+                <th>가격</th>
+            </tr>
+            <th:block th:each="album : ${albumList}">
+            <tr th:object="${album}">
+                <td th:text="*{name}"></td>
+                <td><img th:src="*{imageUrl}"></td>
+                <td th:text="*{price}"></td>
+            </tr>
+            </th:block>`
+        </table>
+
     </div>
+
+</div>
 </body>
 </html>

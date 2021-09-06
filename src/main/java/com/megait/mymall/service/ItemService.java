@@ -28,6 +28,10 @@ public class ItemService {
     private final AlbumRepository albumRepository;
     private final ItemRepository itemRepository;
     private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
+
+    // 카테고리가 먼저 생기고나서 아이템서비스가 생겨야하므로
+    // 카테고리 서비스 선언해두는 것임
 
     @PostConstruct
     public void createItems() throws IOException{
@@ -70,7 +74,12 @@ public class ItemService {
         // 문자열을 모두 받아 List 에 담음. (구분 : 줄바꿈)
         List<String> stringList =
                 Files.readAllLines(resource1.getFile().toPath(), StandardCharsets.UTF_8);
+        /*
+            stringList = { "책이름|url|가격", "책이름|url|가격", "책이름|url|가격", ... }
 
+         */
+
+        // forEach : 컨슈머형으로 사용하는 for문
         stringList.forEach(s -> {
             Category category = categoryRepository.findById((long)(Math.random() * 4) + 8).orElseThrow();
             String[] split = s.split("\\|"); //  '\\|' : 정규식에서의 '|'
@@ -86,7 +95,15 @@ public class ItemService {
             book.setCategory(category);
 
         });
-
-
     }
+
+
+    public List<Book> getBookList() {
+        return bookRepository.findAll();
+    }
+
+    public List<Album> getAlbumList() {
+        return albumRepository.findAll();
+    }
+
 }
