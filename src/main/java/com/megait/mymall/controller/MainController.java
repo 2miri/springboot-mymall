@@ -68,7 +68,6 @@ public class MainController {
 
     }
 
-
     @GetMapping("/login")
     public String login(){
         return "member/login";
@@ -149,5 +148,15 @@ public class MainController {
         model.addAttribute("result", result);
         model.addAttribute("email", email);
         return "member/email-check-result";
+    }
+
+    @GetMapping("/item/detail/{id}")
+    public String itemDetail(Model model, @PathVariable Long id) {
+        Item item = itemService.findItem(id);
+
+        model.addAttribute("item",item);
+
+        return "item/detail";
+
     }
 }

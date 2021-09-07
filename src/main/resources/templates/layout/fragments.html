@@ -88,13 +88,16 @@
                         <span class="lead" th:text="*{#numbers.formatInteger(price, 3,'COMMA')}"></span>
                         원
                     </p>
-                    <p class="card-text">
+                    <p th:if="*{stockQuantity == 0}">
+                        <span class="badge badge-pill badge-danger">품절</span>
+                    </p>
+                    <p class="card-text" th:if="*{stockQuantity !=0}">
                         <span class="lead" th:text="*{stockQuantity}"></span>
                         개 남음
                     </p>
                     <p class="card-title h4" th:text="*{name}"></p>
                     <div>
-                        <a th:href="@{/item/detail/{id}(id=*{id})}" class="btn btn-dark">상세 보기</a>
+                        <a th:href="@{/item/detail/{x}(x=*{id})}" class="btn btn-dark">상세 보기</a>
                     </div>
 
                 </div>
