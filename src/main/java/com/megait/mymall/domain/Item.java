@@ -17,7 +17,6 @@ import java.util.List;
 @DynamicUpdate
 @Getter
 @Setter
-@ToString
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,7 +33,7 @@ public abstract class Item {
     private int price;
 
     @ColumnDefault("100")
-    private int stockQuantity = 100;
+    private int stackQuantity = 100;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Category category;

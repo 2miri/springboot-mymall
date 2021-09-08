@@ -1,13 +1,7 @@
 package com.megait.mymall.service;
 
-import com.megait.mymall.domain.Album;
-import com.megait.mymall.domain.Book;
-import com.megait.mymall.domain.Category;
-import com.megait.mymall.domain.Item;
-import com.megait.mymall.repository.AlbumRepository;
-import com.megait.mymall.repository.BookRepository;
-import com.megait.mymall.repository.CategoryRepository;
-import com.megait.mymall.repository.ItemRepository;
+import com.megait.mymall.domain.*;
+import com.megait.mymall.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -19,6 +13,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -30,9 +25,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final CategoryRepository categoryRepository;
     private final CategoryService categoryService;
-
-    // 카테고리가 먼저 생기고나서 아이템서비스가 생겨야하므로
-    // 카테고리 서비스 선언해두는 것임
+    private final MemberRepository memberRepository;
 
     @PostConstruct
     public void createItems() throws IOException{
@@ -59,7 +52,7 @@ public class ItemService {
                     .name(split[0]) // 상품명
                     .imageUrl(split[1]) // 이미지 경로
                     .price(Integer.parseInt(split[2])) // 가격
-                    .stockQuantity((int)(Math.random() * 10)) // 수량 (stock) - 0 ~ 9 랜덤
+                    .stackQuantity((int)(Math.random() * 10)) // 수량 (stock) - 0 ~ 9 랜덤
                     .build();
 
             album = albumRepository.save(album);
@@ -76,26 +69,28 @@ public class ItemService {
         List<String> stringList =
                 Files.readAllLines(resource1.getFile().toPath(), StandardCharsets.UTF_8);
         /*
-            stringList = { "책이름|url|가격", "책이름|url|가격", "책이름|url|가격", ... }
+            stringList = [ "책이름|url|가격", "책이름|url|가격", "책이름|url|가격", "책이름|url|가격", ...]
 
          */
 
-        // forEach : 컨슈머형으로 사용하는 for문
+
         stringList.forEach(s -> {
             Category category = categoryRepository.findById((long)(Math.random() * 4) + 8).orElseThrow();
             String[] split = s.split("\\|"); //  '\\|' : 정규식에서의 '|'
-
+            // split = { "책이름", "url", "가격" }
             Book book = Book.builder()
                     .name(split[0]) // 상품명
                     .imageUrl(split[1]) // 이미지 경로
                     .price(Integer.parseInt(split[2])) // 가격
-                    .stockQuantity((int) (Math.random() * 10)) // 수량 (stock) - 0 ~ 9 랜덤
+                    .stackQuantity((int) (Math.random() * 10)) // 수량 (stock) - 0 ~ 9 랜덤
                     .build();
 
             bookRepository.save(book);
             book.setCategory(category);
 
         });
+
+
     }
 
 
@@ -110,4 +105,31 @@ public class ItemService {
     public Item findItem(Long id) {
         return itemRepository.findById(id).orElseThrow();
     }
+
+    @Transactional
+    public FlagLike addLike(Member member, Long id) {
+        Item item;
+
+        if(member == null){
+            return FlagLike.ERROR_AUTH;
+        }
+
+        member = memberRepository.findById(member.getId()).orElseThrow();
+        try {
+            item = findItem(id);
+        } catch (NoSuchElementException e){
+            return FlagLike.ERROR_INVALID;
+        }
+
+        if(member.getLikes().contains(item)){
+            return FlagLike.ERROR_DUPLICATE;
+        }
+        member.addLikeItem(item);
+        return FlagLike.OK;
+    }
+
+    public enum FlagLike {
+        ERROR_AUTH, ERROR_INVALID, ERROR_DUPLICATE, OK
+    }
+
 }

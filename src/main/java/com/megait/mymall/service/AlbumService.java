@@ -10,6 +10,7 @@ import com.megait.mymall.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //@Service
+@Transactional
 @RequiredArgsConstructor
 public class AlbumService {
 

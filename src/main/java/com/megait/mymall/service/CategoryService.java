@@ -3,6 +3,7 @@ package com.megait.mymall.service;
 import com.megait.mymall.domain.Category;
 import com.megait.mymall.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
@@ -39,6 +41,7 @@ public class CategoryService {
      */
     @PostConstruct
     public void createCategories() {
+        log.info("createCategories()");
         Category c1 = Category.builder().id(1L).name("도서").parent(null).build();
         Category c2 = Category.builder().id(2L).name("음반").parent(null).build();
 
@@ -66,6 +69,6 @@ public class CategoryService {
                 c1, c2, c3, c4, c5, c6, c7, c8, c9, c10,
                 c11, c12, c13, c14, c15, c16, c17);
 
-        categoryRepository.saveAll(list);
+        categoryRepository.saveAllAndFlush(list);
     }
 }

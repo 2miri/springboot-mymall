@@ -51,10 +51,10 @@ public class Member {
 
     private String name; // 사용자 이름
 
-    @Enumerated(EnumType.STRING)
-    private AuthType authType; // 인증유형 (일반,네이버,구글)
+    private AuthType authType; // 인증 유형 (일반, 네이버, 구글)
 
-    private String picture; // 사용자 프로필 사진 URL
+    private String picture; // 프로필 사진 URL
+
 
     @ManyToMany(cascade = CascadeType.ALL)  // 다대다 양방향
     private List<Item> likes; // '좋아요'한 상품들
@@ -70,5 +70,9 @@ public class Member {
         if (likes == null) likes = new ArrayList<>();
         if (cart == null) cart = new ArrayList<>();
         if (orders == null) orders = new ArrayList<>();
+    }
+
+    public void addLikeItem(Item item) {
+        likes.add(item);
     }
 }
