@@ -178,5 +178,26 @@ public class MainController {
         return jsonObject.toString();
     }
 
+    @GetMapping("/item/like-list") // 찜한 목록 보기
+    public String likeList(@CurrentMember Member member, Model model){
+        List<Item> list = itemService.getLikeList(member);
+        model.addAttribute("likeList", list);
+        return "item/like";
+    }
 
+    @PostMapping("/cart/list")
+    @Transactional
+    public String addCart(@RequestParam("item_id") Long[] itemId, @CurrentMember Member member, Model model){
+        // 장바구니에 등록할 상품 id : 41, 31
+        // 41, 31 ==> Item 엔티티들 조회해온다.
+
+        // 로그인한 유저의 Cart 리스트에 상품 저장
+        itemService.addAllToCart(member, itemId);
+
+        //        "     Like 리스트에 상품 삭제
+        itemService.removeAllFromLikes(member, itemId);
+
+        // 찜목록 보기 실행
+        return likeList(member, model);
+    }
 }

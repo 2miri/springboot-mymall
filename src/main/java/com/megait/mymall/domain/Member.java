@@ -75,4 +75,5 @@ public class Member {
     public void addLikeItem(Item item) {
         likes.add(item);
     }
+
 }
