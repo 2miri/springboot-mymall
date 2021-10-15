@@ -1,6 +1,6 @@
 ### 
 
-# myhome 만들기
+# mymall 만들기
 
 
 
