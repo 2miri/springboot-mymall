@@ -21,9 +21,17 @@ IntelliJ, SpringBoot등을 활용하여 동적 홈페이지를 구상해보자!
 
 #### 개발 환경
 
-JDK 11
-
 IDE : IntelliJ
+
+Springboot 2.5.6
+
+Project Type : Gradle
+
+JDK11
+
+Dependencies
+- Database : H2
+- Web / JPA / Security / Thymeleaf / OAuth2 / Mail / Lombok
 
 
 
