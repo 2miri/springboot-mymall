@@ -21,7 +21,7 @@ IntelliJ, SpringBoot등을 활용하여 동적 홈페이지를 구상해보자!
 
 #### 개발 환경
 
-JDK 1.8
+JDK 11
 
 IDE : IntelliJ
 
